@@ -1,6 +1,7 @@
 import { useState } from "react";
 import raw from "./data/transactions.json";
 import { SearchInput } from "./components/SearchInput";
+import { ListTransactions } from "./components/ListTransactions";
 
 const transactions = raw;
 
@@ -20,9 +21,7 @@ export default function App() {
       </header>
 
       <main className="mx-auto max-w-3xl px-4 py-8">
-        <div className="rounded-2xl border border-zinc-200 bg-white p-6">
-          {transactions.length} transactions
-        </div>
+        <ListTransactions items={transactions} />
       </main>
     </div>
   );
