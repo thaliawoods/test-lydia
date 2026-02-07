@@ -14,7 +14,7 @@ export default function App() {
     if (!q) return transactions;
 
     return transactions.filter((tx) =>
-      normalizeForSearch(tx.label).includes(q)
+      normalizeForSearch(tx.label).includes(q),
     );
   }, [query]);
 
@@ -24,9 +24,11 @@ export default function App() {
         <div className="mx-auto max-w-3xl px-4 py-8">
           <h1 className="text-2xl font-bold text-zinc-900">Transactions</h1>
 
-          <div className="mt-6">
-            <SearchInput value={query} onChange={setQuery} />
-          </div>
+          <SearchInput
+            value={query}
+            onChange={setQuery}
+            resultsCount={filteredTransactions.length}
+          />
         </div>
       </header>
 
