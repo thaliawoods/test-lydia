@@ -12,7 +12,9 @@ export default function App() {
   const filteredTransactions = useMemo(() => {
     const q = normalizeForSearch(query);
     if (!q) return transactions;
-    return transactions.filter((tx) => normalizeForSearch(tx.label).includes(q));
+    return transactions.filter((tx) =>
+      normalizeForSearch(tx.label).includes(q),
+    );
   }, [query]);
 
   return (
@@ -30,7 +32,7 @@ export default function App() {
       </header>
 
       <main className="mx-auto max-w-3xl px-4 py-8">
-        <TransactionsTable items={filteredTransactions} />
+        <TransactionsTable items={filteredTransactions} query={query} />
       </main>
     </div>
   );

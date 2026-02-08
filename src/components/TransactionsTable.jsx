@@ -3,18 +3,39 @@ import { ArrowDownUp } from "lucide-react";
 import { Status } from "./Status";
 import { formatDateFR } from "../lib/utils";
 
-export function TransactionsTable({ items }) {
+function escapeRegExp(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function highlight(label, query) {
+  const q = (query ?? "").trim();
+  if (!q) return label;
+
+  const re = new RegExp(`(${escapeRegExp(q)})`, "ig");
+  const parts = label.split(re);
+
+  return parts.map((part, i) => {
+    const isMatch = part.toLowerCase() === q.toLowerCase();
+    if (!isMatch) return <span key={i}>{part}</span>;
+
+    return (
+      <mark key={i} className="rounded bg-sky-100 px-1 text-zinc-900">
+        {part}
+      </mark>
+    );
+  });
+}
+
+export function TransactionsTable({ items, query }) {
   const [sortDir, setSortDir] = useState("desc"); 
 
   const sorted = useMemo(() => {
     const arr = [...items];
-
     arr.sort((a, b) => {
       const da = new Date(a.date * 1000).getTime();
       const db = new Date(b.date * 1000).getTime();
       return sortDir === "desc" ? db - da : da - db;
     });
-
     return arr;
   }, [items, sortDir]);
 
@@ -22,6 +43,9 @@ export function TransactionsTable({ items }) {
     return (
       <div className="rounded-3xl border border-dashed border-zinc-200 bg-white p-10 text-center">
         <p className="text-sm font-bold text-zinc-900">Pas de résultat</p>
+        <p className="mt-2 text-sm text-zinc-600">
+          Essaie un autre mot-clé (ex : <span className="font-semibold">Paiement</span>).
+        </p>
       </div>
     );
   }
@@ -29,7 +53,9 @@ export function TransactionsTable({ items }) {
   return (
     <div className="overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-sm">
       <div className="flex items-center justify-between gap-3 border-b border-zinc-200 bg-white px-5 py-4">
-        <p className="text-sm font-extrabold tracking-wide text-zinc-500">RÉSULTATS</p>
+        <p className="text-sm font-extrabold tracking-wide text-zinc-500">
+          RÉSULTATS
+        </p>
 
         <button
           type="button"
@@ -57,11 +83,15 @@ export function TransactionsTable({ items }) {
               </div>
 
               <div className="md:col-span-2">
-                <p className="text-sm font-extrabold text-zinc-900">{tx.amount}</p>
+                <p className="text-sm font-extrabold text-zinc-900">
+                  {tx.amount}
+                </p>
               </div>
 
               <div className="md:col-span-5 min-w-0">
-                <p className="truncate text-sm font-semibold text-zinc-900">{tx.label}</p>
+                <p className="truncate text-sm font-semibold text-zinc-900">
+                  {highlight(tx.label, query)}
+                </p>
                 <p className="mt-1 truncate text-xs text-zinc-500">
                   {tx.firstname} {tx.lastname} → {tx.receiverFirstname}
                   {tx.receiverLastname ? ` ${tx.receiverLastname}` : ""}
@@ -69,24 +99,32 @@ export function TransactionsTable({ items }) {
               </div>
 
               <div className="md:col-span-3">
-                <p className="text-sm font-medium text-zinc-700">{formatDateFR(tx.date)}</p>
+                <p className="text-sm font-medium text-zinc-700">
+                  {formatDateFR(tx.date)}
+                </p>
               </div>
             </div>
 
             <div className="md:hidden">
               <div className="flex items-center justify-between gap-3">
                 <Status status={tx.status} />
-                <p className="text-sm font-extrabold text-zinc-900">{tx.amount}</p>
+                <p className="text-sm font-extrabold text-zinc-900">
+                  {tx.amount}
+                </p>
               </div>
 
-              <p className="mt-3 text-sm font-semibold text-zinc-900">{tx.label}</p>
+              <p className="mt-3 text-sm font-semibold text-zinc-900">
+                {highlight(tx.label, query)}
+              </p>
 
               <p className="mt-1 truncate text-xs text-zinc-500">
                 {tx.firstname} {tx.lastname} → {tx.receiverFirstname}
                 {tx.receiverLastname ? ` ${tx.receiverLastname}` : ""}
               </p>
 
-              <p className="mt-2 text-sm font-medium text-zinc-700">{formatDateFR(tx.date)}</p>
+              <p className="mt-2 text-sm font-medium text-zinc-700">
+                {formatDateFR(tx.date)}
+              </p>
             </div>
           </li>
         ))}
