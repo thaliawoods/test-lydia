@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import raw from "./data/transactions.json";
 import { SearchInput } from "./components/SearchInput";
-import { ListTransactions } from "./components/ListTransactions";
+import { TransactionsTable } from "./components/TransactionsTable";
 import { normalizeForSearch } from "./lib/utils";
 
 const transactions = raw;
@@ -12,10 +12,7 @@ export default function App() {
   const filteredTransactions = useMemo(() => {
     const q = normalizeForSearch(query);
     if (!q) return transactions;
-
-    return transactions.filter((tx) =>
-      normalizeForSearch(tx.label).includes(q),
-    );
+    return transactions.filter((tx) => normalizeForSearch(tx.label).includes(q));
   }, [query]);
 
   return (
@@ -33,7 +30,7 @@ export default function App() {
       </header>
 
       <main className="mx-auto max-w-3xl px-4 py-8">
-        <ListTransactions items={filteredTransactions} />
+        <TransactionsTable items={filteredTransactions} />
       </main>
     </div>
   );
