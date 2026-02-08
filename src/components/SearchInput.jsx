@@ -7,15 +7,11 @@ export function SearchInput({ value, onChange, resultsCount }) {
 
   return (
     <div className="w-full">
-      <label htmlFor={id} className="block text-sm font-medium text-zinc-700">
-        Rechercher
-      </label>
-
-      <div className="mt-2 flex w-full flex-col gap-3 sm:flex-row sm:items-stretch">
+      <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-stretch">
         <div className="relative flex-1 min-w-0">
           <Search
             size={18}
-            className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400"
+            className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
             aria-hidden="true"
           />
           <input
@@ -24,7 +20,7 @@ export function SearchInput({ value, onChange, resultsCount }) {
             onChange={(e) => onChange(e.target.value)}
             placeholder="Rechercher une transaction…"
             autoComplete="off"
-            className="w-full rounded-2xl border border-zinc-200 bg-white py-4 pl-11 pr-4 text-sm shadow-sm outline-none placeholder:text-zinc-400 focus:border-zinc-300 focus:ring-4 focus:ring-zinc-100"
+            className="w-full rounded-2xl border border-slate-200 bg-white py-4 pl-11 pr-4 text-sm shadow-sm outline-none placeholder:text-slate-400 focus:border-slate-300 focus:ring-4 focus:ring-sky-100"
           />
         </div>
 
@@ -34,8 +30,8 @@ export function SearchInput({ value, onChange, resultsCount }) {
           disabled={!hasValue}
           className={`inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-4 text-sm font-semibold ring-1 transition sm:w-[140px] ${
             hasValue
-              ? "bg-white text-zinc-800 ring-zinc-300 hover:bg-zinc-50 focus:outline-none focus:ring-4 focus:ring-zinc-200"
-              : "cursor-not-allowed bg-white/60 text-zinc-400 ring-zinc-200"
+              ? "bg-white text-slate-800 ring-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-slate-200"
+              : "bg-white/60 text-slate-400 ring-slate-200 cursor-not-allowed"
           }`}
           aria-label="Effacer la recherche"
         >
@@ -44,7 +40,7 @@ export function SearchInput({ value, onChange, resultsCount }) {
         </button>
       </div>
 
-      <p className="mt-2 text-xs text-zinc-500" aria-live="polite">
+      <p className="mt-2 text-xs text-slate-600" aria-live="polite">
         {resultsCount} résultat{resultsCount > 1 ? "s" : ""}
       </p>
     </div>

@@ -12,15 +12,14 @@ export function Status({ status }) {
       </span>
     );
   }
-
-  if (status === "pending") {
-    return (
-      <span className={`${base} bg-amber-50 text-amber-800 ring-amber-200`}>
-        <Clock3 size={14} aria-hidden="true" />
-        En cours
-      </span>
-    );
-  }
+if (status === "pending") {
+  return (
+    <span className={`${base} bg-amber-50 text-amber-800 ring-amber-200`}>
+      <Clock3 size={14} aria-hidden="true" />
+      En cours
+    </span>
+  );
+}
 
   return (
     <span className={`${base} bg-rose-50 text-rose-700 ring-rose-200`}>
