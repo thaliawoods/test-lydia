@@ -59,6 +59,7 @@ export default function App() {
                     key={f.key}
                     type="button"
                     onClick={() => setStatusFilter(f.key)}
+                    aria-pressed={statusFilter === f.key}
                     className={`
                       shrink-0 whitespace-nowrap rounded-full ring-1 transition font-semibold
                       px-2.5 py-1.5 text-[13px]

@@ -14,6 +14,11 @@ export function SearchInput({ value, onChange, resultsCount }) {
             className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
             aria-hidden="true"
           />
+
+          <label htmlFor={id} className="sr-only">
+            Rechercher une transaction
+          </label>
+
           <input
             id={id}
             value={value}

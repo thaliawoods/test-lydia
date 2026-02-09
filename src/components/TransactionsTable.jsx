@@ -67,14 +67,17 @@ function measureTextWidth(text) {
   return w;
 }
 
-function TooltipPortal({ open, anchorRect, text, bubbleW }) {
+function TooltipPortal({ open, anchorRect, text, bubbleW, id }) {
   if (!open || !anchorRect || !text || !bubbleW) return null;
 
   const gap = 10;
   const centerX = anchorRect.left + anchorRect.width / 2;
 
   const desiredLeft = centerX - bubbleW / 2 + 52;
-  const left = Math.max(12, Math.min(desiredLeft, window.innerWidth - bubbleW - 12));
+  const left = Math.max(
+    12,
+    Math.min(desiredLeft, window.innerWidth - bubbleW - 12)
+  );
 
   const top = Math.max(12, anchorRect.top - gap);
   const arrowX = Math.max(18, Math.min(centerX - left, bubbleW - 18));
@@ -90,6 +93,7 @@ function TooltipPortal({ open, anchorRect, text, bubbleW }) {
         pointerEvents: "none",
       }}
       role="tooltip"
+      id={id ?? undefined}
     >
       <div className="relative">
         <div className="rounded-2xl bg-white px-4 py-3 text-xs font-medium text-zinc-700 shadow-xl ring-1 ring-zinc-200">
@@ -126,6 +130,7 @@ export function TransactionsTable({ items, query }) {
     rect: null,
     text: "",
     width: 0,
+    id: null,
   });
 
   const sorted = useMemo(() => {
@@ -156,7 +161,8 @@ export function TransactionsTable({ items, query }) {
       <div className="rounded-3xl border border-dashed border-zinc-200 bg-white p-10 text-center">
         <p className="text-sm font-bold text-zinc-900">Pas de résultat</p>
         <p className="mt-2 text-sm text-zinc-600">
-          Essaie un autre mot-clé (ex : <span className="font-semibold">Paiement</span>).
+          Essaie un autre mot-clé (ex :{" "}
+          <span className="font-semibold">Paiement</span>).
         </p>
       </div>
     );
@@ -169,11 +175,14 @@ export function TransactionsTable({ items, query }) {
         anchorRect={tooltip.rect}
         text={tooltip.text}
         bubbleW={tooltip.width}
+        id={tooltip.id}
       />
 
       <div className="overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-sm">
         <div className="flex items-center justify-between gap-3 border-b border-zinc-200 bg-white px-5 py-4">
-          <p className="text-sm font-extrabold tracking-wide text-zinc-500">RÉSULTATS</p>
+          <p className="text-sm font-extrabold tracking-wide text-zinc-500">
+            RÉSULTATS
+          </p>
 
           <button
             type="button"
@@ -199,6 +208,8 @@ export function TransactionsTable({ items, query }) {
                 ? errorFR[tx.statusErrorDisplay] ?? tx.statusErrorDisplay
                 : null;
 
+            const tooltipId = err ? `tooltip-${tx.paymentId}` : undefined;
+
             const showTooltip = (e) => {
               if (!err) return;
 
@@ -212,9 +223,12 @@ export function TransactionsTable({ items, query }) {
               const maxW = Math.min(700, window.innerWidth - 24);
 
               const textW = measureTextWidth(err);
-              const w = Math.min(maxW, Math.max(minW, paddingX + iconW + gapInside + textW));
+              const w = Math.min(
+                maxW,
+                Math.max(minW, paddingX + iconW + gapInside + textW)
+              );
 
-              setTooltip({ open: true, rect, text: err, width: w });
+              setTooltip({ open: true, rect, text: err, width: w, id: tooltipId });
             };
 
             const hideTooltip = () => {
@@ -233,13 +247,18 @@ export function TransactionsTable({ items, query }) {
                       onFocus={showTooltip}
                       onBlur={hideTooltip}
                       tabIndex={err ? 0 : -1}
+                      aria-describedby={
+                        err && tooltip.open ? tooltipId : undefined
+                      }
                     >
                       <Status status={tx.status} />
                     </span>
                   </div>
 
                   <div className="md:col-span-2">
-                    <p className="text-sm font-extrabold text-zinc-900">{tx.amount}</p>
+                    <p className="text-sm font-extrabold text-zinc-900">
+                      {tx.amount}
+                    </p>
                   </div>
 
                   <div className="md:col-span-5 min-w-0">
@@ -253,7 +272,9 @@ export function TransactionsTable({ items, query }) {
                   </div>
 
                   <div className="md:col-span-3">
-                    <p className="text-sm font-medium text-zinc-700">{formatDateFR(tx.date)}</p>
+                    <p className="text-sm font-medium text-zinc-700">
+                      {formatDateFR(tx.date)}
+                    </p>
                   </div>
                 </div>
 
@@ -266,11 +287,16 @@ export function TransactionsTable({ items, query }) {
                       onFocus={showTooltip}
                       onBlur={hideTooltip}
                       tabIndex={err ? 0 : -1}
+                      aria-describedby={
+                        err && tooltip.open ? tooltipId : undefined
+                      }
                     >
                       <Status status={tx.status} />
                     </span>
 
-                    <p className="text-sm font-extrabold text-zinc-900">{tx.amount}</p>
+                    <p className="text-sm font-extrabold text-zinc-900">
+                      {tx.amount}
+                    </p>
                   </div>
 
                   <p className="mt-3 text-sm font-semibold text-zinc-900">
@@ -282,7 +308,9 @@ export function TransactionsTable({ items, query }) {
                     {tx.receiverLastname ? ` ${tx.receiverLastname}` : ""}
                   </p>
 
-                  <p className="mt-2 text-sm font-medium text-zinc-700">{formatDateFR(tx.date)}</p>
+                  <p className="mt-2 text-sm font-medium text-zinc-700">
+                    {formatDateFR(tx.date)}
+                  </p>
                 </div>
               </li>
             );
