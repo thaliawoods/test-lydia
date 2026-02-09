@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import raw from "./data/transactions.json";
 import { SearchInput } from "./components/SearchInput";
 import { TransactionsTable } from "./components/TransactionsTable";
-import { normalizeForSearch } from "./lib/utils";
+import { buildNgramIndex, searchWithNgrams } from "./lib/ngramIndex";
 
 const transactions = raw;
 
@@ -17,20 +17,17 @@ export default function App() {
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
-  const filteredTransactions = useMemo(() => {
-    let list = transactions;
+  const ngramIndex = useMemo(() => buildNgramIndex(transactions), []);
 
-    const q = normalizeForSearch(query);
-    if (q) {
-      list = list.filter((tx) => normalizeForSearch(tx.label).includes(q));
-    }
+  const filteredTransactions = useMemo(() => {
+    let list = searchWithNgrams(query, ngramIndex, transactions);
 
     if (statusFilter !== "all") {
       list = list.filter((tx) => tx.status === statusFilter);
     }
 
     return list;
-  }, [query, statusFilter]);
+  }, [query, statusFilter, ngramIndex]);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -56,7 +53,6 @@ export default function App() {
                 </div>
               </div>
 
-              {/* chips – version mobile compacte (4 visibles sur une ligne) */}
               <div className="mt-2 flex flex-nowrap items-center gap-2">
                 {FILTERS.map((f) => (
                   <button
@@ -87,7 +83,7 @@ export default function App() {
         <div className="mb-4">
           <h2 className='[font-family:"Space_Grotesk",system-ui,sans-serif] text-lg font-extrabold text-slate-900'>
             Résultats
-          </h2>{" "}
+          </h2>
         </div>
 
         <TransactionsTable items={filteredTransactions} query={query} />
