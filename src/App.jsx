@@ -43,9 +43,9 @@ export default function App() {
                   LYDIA • TRANSACTIONS
                 </p>
 
-<h1 className='[font-family:"Space_Grotesk",system-ui,sans-serif] mt-3 text-3xl font-extrabold tracking-tight text-slate-900 md:text-4xl'>
-  Transactions
-</h1>
+                <h1 className='[font-family:"Space_Grotesk",system-ui,sans-serif] mt-3 text-3xl font-extrabold tracking-tight text-slate-900 md:text-4xl'>
+                  Transactions
+                </h1>
 
                 <div className="mt-6">
                   <SearchInput
@@ -85,9 +85,10 @@ export default function App() {
 
       <main className="mx-auto max-w-5xl px-4 py-10">
         <div className="mb-4">
-<h2 className='[font-family:"Space_Grotesk",system-ui,sans-serif] text-lg font-extrabold text-slate-900'>
-  Résultats
-</h2>      </div>
+          <h2 className='[font-family:"Space_Grotesk",system-ui,sans-serif] text-lg font-extrabold text-slate-900'>
+            Résultats
+          </h2>{" "}
+        </div>
 
         <TransactionsTable items={filteredTransactions} query={query} />
       </main>

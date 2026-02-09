@@ -8,6 +8,10 @@ function escapeRegExp(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+function isWordChar(ch) {
+  return !!ch && /[0-9A-Za-zÀ-ÖØ-öø-ÿ]/.test(ch);
+}
+
 function highlight(label, query) {
   const q = (query ?? "").trim();
   if (!q) return label;
@@ -19,8 +23,22 @@ function highlight(label, query) {
     const isMatch = part.toLowerCase() === q.toLowerCase();
     if (!isMatch) return <span key={i}>{part}</span>;
 
+    const prev = parts[i - 1] ?? "";
+    const next = parts[i + 1] ?? "";
+    const leftChar = prev.slice(-1);
+    const rightChar = next.slice(0, 1);
+
+    const middleOfWord = isWordChar(leftChar) || isWordChar(rightChar);
+
     return (
-      <mark key={i} className="rounded bg-sky-100 px-1 text-zinc-900">
+      <mark
+        key={i}
+        className={
+          middleOfWord
+            ? "rounded bg-sky-100 text-zinc-900"
+            : "rounded bg-sky-100 px-0.5 -mx-0.5 text-zinc-900"
+        }
+      >
         {part}
       </mark>
     );
@@ -49,38 +67,46 @@ function measureTextWidth(text) {
   return w;
 }
 
-function TooltipPortal({ open, anchorRect, text }) {
-  if (!open || !anchorRect || !text) return null;
+function TooltipPortal({ open, anchorRect, text, bubbleW }) {
+  if (!open || !anchorRect || !text || !bubbleW) return null;
 
   const gap = 10;
   const centerX = anchorRect.left + anchorRect.width / 2;
+
+  const desiredLeft = centerX - bubbleW / 2 + 52;
+  const left = Math.max(12, Math.min(desiredLeft, window.innerWidth - bubbleW - 12));
+
   const top = Math.max(12, anchorRect.top - gap);
+  const arrowX = Math.max(18, Math.min(centerX - left, bubbleW - 18));
 
   return createPortal(
     <div
       className="fixed z-[9999]"
       style={{
-        left: centerX,
+        left,
         top,
-        transform: "translate(-50%, -100%) translateX(52px)",
+        width: bubbleW,
+        transform: "translateY(-100%)",
         pointerEvents: "none",
       }}
       role="tooltip"
     >
-      <div className="relative inline-block">
-        <div className="inline-flex items-center gap-2 whitespace-nowrap rounded-2xl bg-white px-4 py-3 text-xs font-medium text-zinc-700 shadow-xl ring-1 ring-zinc-200">
-          <AlertTriangle
-            size={16}
-            className="shrink-0 -translate-y-[0.5px] text-rose-500"
-            aria-hidden="true"
-          />
-          <span className="whitespace-nowrap leading-snug">{text}</span>
+      <div className="relative">
+        <div className="rounded-2xl bg-white px-4 py-3 text-xs font-medium text-zinc-700 shadow-xl ring-1 ring-zinc-200">
+          <div className="flex items-center gap-2 whitespace-nowrap">
+            <AlertTriangle
+              size={16}
+              className="shrink-0 -translate-y-[0.5px] text-rose-500"
+              aria-hidden="true"
+            />
+            <span className="whitespace-nowrap leading-snug">{text}</span>
+          </div>
         </div>
 
         <div
           className="absolute h-3 w-3 rotate-45 bg-white shadow-xl"
           style={{
-            left: "calc(50% - 52px - 6px)",
+            left: arrowX - 6,
             top: "100%",
             marginTop: -8,
           }}
@@ -99,6 +125,7 @@ export function TransactionsTable({ items, query }) {
     open: false,
     rect: null,
     text: "",
+    width: 0,
   });
 
   const sorted = useMemo(() => {
@@ -141,6 +168,7 @@ export function TransactionsTable({ items, query }) {
         open={tooltip.open}
         anchorRect={tooltip.rect}
         text={tooltip.text}
+        bubbleW={tooltip.width}
       />
 
       <div className="overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-sm">
