@@ -1,16 +1,111 @@
-# React + Vite
+# Lydia — Transactions Search
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Ce projet est une **Single Page Application React** réalisée dans le cadre du **test technique front-end Lydia**.
 
-Currently, two official plugins are available:
+L’objectif était de concevoir une interface **claire, fluide et agréable à utiliser**, capable de faciliter la recherche au sein d’une liste de transactions à partir d’un fichier JSON fourni.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Une attention particulière a été portée à la **qualité de l’expérience utilisateur**, à la **cohérence visuelle**, à l’**accessibilité**, ainsi qu’à la **lisibilité du code**.
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Fonctionnalités
 
-## Expanding the ESLint configuration
+L’application permet de rechercher rapidement une transaction à partir de son libellé. La recherche est **insensible à la casse** et les résultats sont **mis à jour en temps réel**.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Un bouton **Effacer** accompagne le champ de recherche. Il est volontairement désactivé lorsque le champ est vide, puis devient actif dès qu’une saisie est effectuée. 
+
+Un système de **filtres par statut** permet d’affiner les résultats selon leur état (tous, validé, en cours, annulé). Ces filtres ont été pensés comme un prolongement de la recherche textuelle.
+
+Les résultats sont présentés sous forme de liste structurée, affichant pour chaque transaction son **statut**, son **montant**, son **libellé** et sa **date**.
+
+Lorsque la recherche ne retourne aucun élément, un **état vide dédié** est affiché afin de conserver une expérience claire, explicite et rassurante pour l’utilisateur.
+
+---
+
+## UI / UX
+
+L’interface a été conçue pour rester **sobre, lisible et orientée produit**.  
+La hiérarchie visuelle suit un enchaînement simple et logique : **recherche → filtres → résultats**.
+Les composants sont réutilisables, découplés, et pensés pour évoluer facilement.
+
+---
+
+## ♿ Accessibilité
+
+L’accessibilité a été prise en compte dès la conception de l’interface, afin de proposer une expérience utilisable par le plus grand nombre.
+
+Les choix UI ont été pensés pour garantir une **lecture claire**, une **navigation fluide** et une **compréhension immédiate** des états de l’interface (résultats, filtres actifs, état vide).
+
+- les champs de formulaire sont correctement **labelisés**,
+- les boutons disposent d’**états explicites** (actif, désactivé),
+- la navigation est possible **au clavier**,
+- les contrastes et la hiérarchie visuelle ont été travaillés pour rester lisibles,
+- les changements de contexte et états vides sont clairement exprimés.
+
+L’accessibilité est ici envisagée comme une **composante naturelle de l’expérience utilisateur**, au même titre que le design ou la performance.
+
+---
+
+## Wireframes & démarche UX
+
+Avant l’implémentation, j’ai réalisé plusieurs **wireframes à la main** afin de réfléchir à la structure de l’interface, à la hiérarchie des informations et aux parcours utilisateurs.
+
+Ces croquis m’ont permis de cadrer l’enchaînement des écrans, d’identifier rapidement les éléments inutiles, et de poser une base simple et lisible avant le développement.
+
+### Wireframe (papier)
+
+<img src="./public/assets/wireframe.jpg" alt="Wireframe" width="520" />
+
+---
+
+## Choix techniques
+
+Le projet est construit avec **React** et **Vite**, en **JavaScript**, conformément à l’énoncé du test.
+
+Le styling repose sur **Tailwind CSS**, choisi pour sa rapidité de mise en place, sa cohérence visuelle et sa facilité de maintenance.
+
+La logique de recherche a été implémentée **sans librairie externe**, comme demandé.  
+Elle s’appuie notamment sur une approche par **n-grammes**, permettant d’améliorer la pertinence des résultats tout en conservant de bonnes performances, même lorsque l’utilisateur saisit des libellés partiels.
+
+L’application est structurée autour de composants clairs (`SearchInput`, `Status`, `TransactionsTable`), chacun ayant une responsabilité bien définie.
+
+---
+
+## Tests
+
+Des tests end-to-end avec Playwright ont été ajoutés pour sécuriser les parcours clés (recherche, reset, état vide, filtres).
+
+Lancer les tests e2e :
+    npm run test:e2e
+
+Interface graphique Playwright :
+    npm run test:e2e:ui
+
+---
+
+## Installation & lancement
+
+Prérequis :
+- Node.js >= 20
+- npm
+
+Installation :
+    npm install
+
+Lancer le projet en local :
+    npm run dev
+
+Build de production :
+    npm run build
+    npm run preview
+
+---
+
+## CI / CD
+
+- GitHub Actions : workflow e2e Playwright
+- Vercel : déploiement automatique à chaque push
+
+Application déployée :
+    https://test-lydia.vercel.app
+
